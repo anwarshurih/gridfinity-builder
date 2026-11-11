@@ -29,11 +29,76 @@ main {
   height: calc(100vh - 90px);
 }
 
+/* ---- controls panel ---- */
+
 #controls {
   width: 300px;
   padding: 16px 24px;
   border-right: 1px solid #333;
+  overflow-y: auto;
 }
+
+fieldset {
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin: 0 0 16px;
+  padding: 12px;
+}
+
+legend {
+  padding: 0 6px;
+  color: #f0a030;
+  font-weight: bold;
+}
+
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: #eee;
+  font-size: 1rem;
+}
+
+label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+#summary {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #f0a030;
+  color: #1e1e1e;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #555;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* ---- preview area ---- */
 
 #preview {
   flex: 1;

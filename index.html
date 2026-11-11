@@ -13,15 +13,55 @@
   </header>
 
   <main>
-    <!-- settings will go here -->
-    <section id="controls">
-      <h2>Bin settings</h2>
-      <p>Coming soon...</p>
-    </section>
+    <form id="controls">
+      <fieldset>
+        <legend>Size</legend>
+
+        <label for="unitsX">Width (grid units)</label>
+        <input type="number" id="unitsX" min="1" max="8" value="2">
+
+        <label for="unitsY">Depth (grid units)</label>
+        <input type="number" id="unitsY" min="1" max="8" value="1">
+
+        <label for="heightUnits">Height (7mm units)</label>
+        <input type="number" id="heightUnits" min="2" max="20" value="3">
+
+        <label for="wall">Wall thickness (mm)</label>
+        <input type="number" id="wall" min="0.8" max="3" step="0.1" value="1.2">
+      </fieldset>
+
+      <fieldset>
+        <legend>Compartments</legend>
+
+        <label for="compartmentsX">Across</label>
+        <input type="number" id="compartmentsX" min="1" max="8" value="1">
+
+        <label for="compartmentsY">Down</label>
+        <input type="number" id="compartmentsY" min="1" max="8" value="1">
+      </fieldset>
+
+      <fieldset>
+        <legend>Options</legend>
+
+        <label class="checkbox">
+          <input type="checkbox" id="stackingLip" checked>
+          Stacking lip
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" id="magnets">
+          Magnet holes
+        </label>
+      </fieldset>
+
+      <p id="summary"></p>
+
+      <button type="button" id="downloadBtn" disabled>Download STL</button>
+    </form>
 
     <!-- 3D preview will go here -->
     <section id="preview">
-      <p>Preview</p>
+      <p>Preview coming soon</p>
     </section>
   </main>
 
