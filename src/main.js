@@ -1,12 +1,16 @@
 // entry point for the app
 
-import { setupPreview, showBox } from './preview.js';
+import Module from 'https://cdn.jsdelivr.net/npm/manifold-3d@3.5.4/manifold.js';
+import { setupPreview, showMesh } from './preview.js';
+import { makeBin, getMeshData } from './bin.js';
 
 const GRID_SIZE = 42;   // mm, standard gridfinity grid
 const HEIGHT_UNIT = 7;  // mm per height unit
 
 const form = document.getElementById('controls');
 const summary = document.getElementById('summary');
+
+let wasm = null; // the manifold library, loaded at startup
 
 // read all the settings from the form into one object
 function getSettings() {
@@ -30,12 +34,21 @@ function update() {
   const height = s.heightUnits * HEIGHT_UNIT;
 
   summary.textContent = `Bin size: ${width} x ${depth} x ${height} mm`;
-  showBox(width, depth, height);
+
+  if (!wasm) return; // library not loaded yet
+
+  const bin = makeBin(wasm, s);
+  showMesh(getMeshData(bin), height);
+  bin.delete(); // free the memory used by manifold
 }
 
 setupPreview(document.getElementById('preview'));
-
-// update whenever any setting changes
 form.addEventListener('input', update);
-
 update();
+
+// load manifold (it's a WebAssembly library so it takes a moment)
+Module().then((loaded) => {
+  wasm = loaded;
+  wasm.setup();
+  update();
+});

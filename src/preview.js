@@ -1,5 +1,4 @@
 // 3D preview using three.js
-// for now it just shows a box the same size as the bin
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -53,17 +52,20 @@ export function setupPreview(container) {
   animate();
 }
 
-// replace the current model with a box of the given size (mm)
-export function showBox(width, depth, height) {
+// replace the current model with a new one
+// positions = flat list of triangle corners (x, y, z, x, y, z, ...)
+export function showMesh(positions, height) {
   if (binMesh) {
     scene.remove(binMesh);
     binMesh.geometry.dispose();
   }
 
-  const geometry = new THREE.BoxGeometry(width, depth, height);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.computeVertexNormals();
+
   const material = new THREE.MeshStandardMaterial({ color: 0xf0a030, roughness: 0.6 });
   binMesh = new THREE.Mesh(geometry, material);
-  binMesh.position.z = height / 2; // sit on the floor
   scene.add(binMesh);
 
   controls.target.set(0, 0, height / 2);

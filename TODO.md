@@ -3,7 +3,7 @@
 - [x] Project setup
 - [x] Basic page layout and controls panel (HTML/CSS)
 - [x] 3D preview with Three.js showing a simple box
-- [ ] Generate a basic Gridfinity bin shape (42mm grid, 7mm height units)
+- [x] Generate a basic Gridfinity bin shape (42mm grid, 7mm height units)
 - [ ] Proper Gridfinity base profile on each grid cell
 - [ ] Size controls: width, depth, height, wall thickness
 - [ ] Export STL download
