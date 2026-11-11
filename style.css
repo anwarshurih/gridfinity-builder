@@ -102,8 +102,10 @@ button:disabled {
 
 #preview {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
+  position: relative;
+  overflow: hidden;
+}
+
+#preview canvas {
+  display: block;
 }

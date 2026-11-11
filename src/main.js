@@ -1,5 +1,7 @@
 // entry point for the app
 
+import { setupPreview, showBox } from './preview.js';
+
 const GRID_SIZE = 42;   // mm, standard gridfinity grid
 const HEIGHT_UNIT = 7;  // mm per height unit
 
@@ -20,16 +22,20 @@ function getSettings() {
   };
 }
 
-// show the real size of the bin in mm under the controls
-function updateSummary() {
+// work out the bin size, show it under the controls and update the preview
+function update() {
   const s = getSettings();
   const width = s.unitsX * GRID_SIZE - 0.5;
   const depth = s.unitsY * GRID_SIZE - 0.5;
   const height = s.heightUnits * HEIGHT_UNIT;
+
   summary.textContent = `Bin size: ${width} x ${depth} x ${height} mm`;
+  showBox(width, depth, height);
 }
 
-// update whenever any setting changes
-form.addEventListener('input', updateSummary);
+setupPreview(document.getElementById('preview'));
 
-updateSummary();
+// update whenever any setting changes
+form.addEventListener('input', update);
+
+update();

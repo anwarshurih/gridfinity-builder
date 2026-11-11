@@ -60,11 +60,18 @@
     </form>
 
     <!-- 3D preview will go here -->
-    <section id="preview">
-      <p>Preview coming soon</p>
-    </section>
+    <section id="preview"></section>
   </main>
 
+  <!-- tells the browser where to load three.js from -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>
