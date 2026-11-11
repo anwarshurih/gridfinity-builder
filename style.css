@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #1e1e1e;
+  color: #eee;
+}
+
+header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #333;
+}
+
+header h1 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+}
+
+header p {
+  margin: 0;
+  color: #aaa;
+}
+
+main {
+  display: flex;
+  height: calc(100vh - 90px);
+}
+
+#controls {
+  width: 300px;
+  padding: 16px 24px;
+  border-right: 1px solid #333;
+}
+
+#preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
