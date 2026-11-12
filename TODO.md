@@ -6,7 +6,7 @@
 - [x] Generate a basic Gridfinity bin shape (42mm grid, 7mm height units)
 - [x] Proper Gridfinity base profile on each grid cell
 - [ ] Size controls: width, depth, height, wall thickness
-- [ ] Export STL download
+- [x] Export STL download
 - [ ] Stacking lip option
 - [ ] Compartment dividers
 - [ ] Magnet holes option
