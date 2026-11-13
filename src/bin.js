@@ -7,6 +7,7 @@ const CLEARANCE = 0.5;     // bins are 0.5mm smaller than the grid so they fit
 const CORNER_RADIUS = 3.75;
 const BASE_HEIGHT = 4.75;  // height of the feet that sit in the baseplate
 const FLOOR = 1.2;         // thickness of the bottom above the feet (mm)
+const LIP_HEIGHT = 4.4;    // stacking lip sticks up this much above the bin
 
 // rounded rectangle, centred on 0,0
 function roundedRect(CrossSection, width, depth, radius) {
@@ -18,6 +19,37 @@ function roundedRect(CrossSection, width, depth, radius) {
 // a very thin rounded slice at height z (used to build sloped shapes)
 function slice(CrossSection, size, radius, z) {
   return roundedRect(CrossSection, size, size, radius).extrude(0.01).translate([0, 0, z]);
+}
+
+// thin rounded slice with separate width/depth, shrunk in by "inset" from the bin outline
+function insetSlice(CrossSection, width, depth, inset, z) {
+  const r = Math.max(0.5, CORNER_RADIUS - inset);
+  return roundedRect(CrossSection, width - 2 * inset, depth - 2 * inset, r)
+    .extrude(0.01)
+    .translate([0, 0, z]);
+}
+
+// the space inside a bin with a stacking lip
+// the lip copies the shape of the base (upside down) so another bin can sit on top
+function lipCavity(wasm, width, depth, wall, height, floorZ) {
+  const { Manifold, CrossSection } = wasm;
+  const at = (inset, z) => insetSlice(CrossSection, width, depth, inset, z);
+
+  const narrowest = 2.6; // how far the lip sticks in at its narrowest point
+  const ledge = height - Math.max(0, narrowest - wall); // where the walls start sloping in
+
+  const parts = [
+    // straight inside walls up to the ledge
+    roundedRect(CrossSection, width - 2 * wall, depth - 2 * wall, Math.max(0.5, CORNER_RADIUS - wall))
+      .extrude(ledge - floorZ)
+      .translate([0, 0, floorZ]),
+    Manifold.hull([at(wall, ledge), at(narrowest, height)]),            // 45 degree ledge (printable without supports)
+    Manifold.hull([at(narrowest, height), at(1.9, height + 0.7)]),      // 0.7mm slope
+    Manifold.hull([at(1.9, height + 0.7), at(1.9, height + 2.5)]),      // 1.8mm straight
+    Manifold.hull([at(1.9, height + 2.5), at(0.6, height + 3.8)]),      // slope out to the top
+    Manifold.hull([at(0.6, height + 3.8), at(0.6, height + LIP_HEIGHT + 1)]), // through the top
+  ];
+  return Manifold.union(parts);
 }
 
 // one gridfinity foot (the stepped shape under each grid square)
@@ -60,15 +92,22 @@ export function makeBin(wasm, s) {
     }
   }
 
-  // main body sits on top of the feet
+  // main body sits on top of the feet (taller if it has a stacking lip)
+  const topZ = s.stackingLip ? height + LIP_HEIGHT : height;
   const body = roundedRect(CrossSection, width, depth, CORNER_RADIUS)
-    .extrude(height - BASE_HEIGHT)
+    .extrude(topZ - BASE_HEIGHT)
     .translate([0, 0, BASE_HEIGHT]);
 
-  // inside space (made a bit taller so it cuts through the top)
-  const inner = roundedRect(CrossSection, width - 2 * s.wall, depth - 2 * s.wall, CORNER_RADIUS - s.wall)
-    .extrude(height)
-    .translate([0, 0, BASE_HEIGHT + FLOOR]);
+  const floorZ = BASE_HEIGHT + FLOOR;
+  let inner;
+  if (s.stackingLip) {
+    inner = lipCavity(wasm, width, depth, s.wall, height, floorZ);
+  } else {
+    // plain inside space (made a bit taller so it cuts through the top)
+    inner = roundedRect(CrossSection, width - 2 * s.wall, depth - 2 * s.wall, CORNER_RADIUS - s.wall)
+      .extrude(height)
+      .translate([0, 0, floorZ]);
+  }
 
   return Manifold.union([...feet, body]).subtract(inner);
 }

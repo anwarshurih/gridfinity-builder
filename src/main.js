@@ -33,7 +33,7 @@ function update() {
   const s = getSettings();
   const width = s.unitsX * GRID_SIZE - 0.5;
   const depth = s.unitsY * GRID_SIZE - 0.5;
-  const height = s.heightUnits * HEIGHT_UNIT;
+  const height = s.heightUnits * HEIGHT_UNIT + (s.stackingLip ? 4.4 : 0);
 
   summary.textContent = `Bin size: ${width} x ${depth} x ${height} mm`;
 
