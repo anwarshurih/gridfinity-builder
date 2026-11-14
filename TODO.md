@@ -8,7 +8,7 @@
 - [x] Size controls: width, depth, height, wall thickness
 - [x] Export STL download
 - [x] Stacking lip option
-- [ ] Compartment dividers
+- [x] Compartment dividers
 - [ ] Magnet holes option
 - [ ] Item cutout mode (make a snug bin for a specific item)
 - [ ] Show bin dimensions

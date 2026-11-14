@@ -109,7 +109,38 @@ export function makeBin(wasm, s) {
       .translate([0, 0, floorZ]);
   }
 
-  return Manifold.union([...feet, body]).subtract(inner);
+  let bin = Manifold.union([...feet, body]).subtract(inner);
+
+  // dividers between compartments
+  const dividers = makeDividers(wasm, s, width, depth, floorZ, height);
+  if (dividers.length > 0) {
+    bin = Manifold.union([bin, ...dividers]);
+  }
+  return bin;
+}
+
+// thin walls splitting the inside into compartments
+function makeDividers(wasm, s, width, depth, floorZ, height) {
+  const { Manifold } = wasm;
+  const thickness = Math.max(0.8, s.wall);
+  const innerW = width - 2 * s.wall;
+  const innerD = depth - 2 * s.wall;
+  // stop just below the top (or below the lip) so bins still stack
+  const top = s.stackingLip ? height - 1.5 : height - 0.5;
+  const tall = top - floorZ + 0.1;
+  const dividers = [];
+
+  for (let i = 1; i < s.compartmentsX; i++) {
+    const x = -innerW / 2 + (innerW * i) / s.compartmentsX;
+    const wall = Manifold.cube([thickness, innerD + 0.2, tall], true);
+    dividers.push(wall.translate([x, 0, floorZ - 0.1 + tall / 2]));
+  }
+  for (let j = 1; j < s.compartmentsY; j++) {
+    const y = -innerD / 2 + (innerD * j) / s.compartmentsY;
+    const wall = Manifold.cube([innerW + 0.2, thickness, tall], true);
+    dividers.push(wall.translate([0, y, floorZ - 0.1 + tall / 2]));
+  }
+  return dividers;
 }
 
 // turn a manifold into flat arrays three.js can use
