@@ -111,12 +111,36 @@ export function makeBin(wasm, s) {
 
   let bin = Manifold.union([...feet, body]).subtract(inner);
 
+  // magnet holes in the bottom of each foot
+  if (s.magnets) {
+    bin = bin.subtract(makeMagnetHoles(wasm, s));
+  }
+
   // dividers between compartments
   const dividers = makeDividers(wasm, s, width, depth, floorZ, height);
   if (dividers.length > 0) {
     bin = Manifold.union([bin, ...dividers]);
   }
   return bin;
+}
+
+// standard gridfinity magnet holes: 6.5mm wide, 2.4mm deep,
+// 4 per grid square, each 13mm from the centre in x and y (26mm apart)
+function makeMagnetHoles(wasm, s) {
+  const { Manifold } = wasm;
+  const hole = Manifold.cylinder(2.4, 3.25, 3.25, 32);
+  const holes = [];
+
+  for (let x = 0; x < s.unitsX; x++) {
+    for (let y = 0; y < s.unitsY; y++) {
+      const cx = (x - (s.unitsX - 1) / 2) * GRID_SIZE;
+      const cy = (y - (s.unitsY - 1) / 2) * GRID_SIZE;
+      for (const [dx, dy] of [[-13, -13], [13, -13], [-13, 13], [13, 13]]) {
+        holes.push(hole.translate([cx + dx, cy + dy, -0.01]));
+      }
+    }
+  }
+  return Manifold.union(holes);
 }
 
 // thin walls splitting the inside into compartments

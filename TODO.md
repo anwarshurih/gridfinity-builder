@@ -9,7 +9,7 @@
 - [x] Export STL download
 - [x] Stacking lip option
 - [x] Compartment dividers
-- [ ] Magnet holes option
+- [x] Magnet holes option
 - [ ] Item cutout mode (make a snug bin for a specific item)
 - [ ] Show bin dimensions
 - [ ] Save/load presets
