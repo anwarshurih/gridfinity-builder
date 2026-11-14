@@ -14,18 +14,40 @@ const downloadBtn = document.getElementById('downloadBtn');
 
 let wasm = null; // the manifold library, loaded at startup
 
+// read a number input and keep it between its min and max
+// (stops things like a 0 or 500 unit bin breaking the preview)
+function readNumber(id) {
+  const input = document.getElementById(id);
+  const min = Number(input.min);
+  const max = Number(input.max);
+  let value = Number(input.value);
+
+  if (Number.isNaN(value) || input.value === '') value = Number(input.defaultValue);
+  if (input.step !== 'any' && !input.step) value = Math.round(value); // whole numbers only
+  return Math.min(max, Math.max(min, value));
+}
+
 // read all the settings from the form into one object
 function getSettings() {
   return {
-    unitsX: Number(document.getElementById('unitsX').value),
-    unitsY: Number(document.getElementById('unitsY').value),
-    heightUnits: Number(document.getElementById('heightUnits').value),
-    wall: Number(document.getElementById('wall').value),
-    compartmentsX: Number(document.getElementById('compartmentsX').value),
-    compartmentsY: Number(document.getElementById('compartmentsY').value),
+    unitsX: readNumber('unitsX'),
+    unitsY: readNumber('unitsY'),
+    heightUnits: readNumber('heightUnits'),
+    wall: readNumber('wall'),
+    compartmentsX: readNumber('compartmentsX'),
+    compartmentsY: readNumber('compartmentsY'),
     stackingLip: document.getElementById('stackingLip').checked,
     magnets: document.getElementById('magnets').checked,
   };
+}
+
+// name the file after the settings so it's easy to find later
+function makeFilename(s) {
+  let name = `gridfinity_${s.unitsX}x${s.unitsY}x${s.heightUnits}`;
+  if (s.compartmentsX * s.compartmentsY > 1) name += `_${s.compartmentsX}x${s.compartmentsY}-compartments`;
+  if (s.magnets) name += '_magnets';
+  if (!s.stackingLip) name += '_nolip';
+  return name + '.stl';
 }
 
 // work out the bin size, show it under the controls and update the preview
@@ -35,7 +57,7 @@ function update() {
   const depth = s.unitsY * GRID_SIZE - 0.5;
   const height = s.heightUnits * HEIGHT_UNIT + (s.stackingLip ? 4.4 : 0);
 
-  summary.textContent = `Bin size: ${width} x ${depth} x ${height} mm`;
+  summary.textContent = `Bin size: ${width} x ${depth} x ${height.toFixed(1)} mm`;
 
   if (!wasm) return; // library not loaded yet
 
@@ -52,7 +74,7 @@ update();
 downloadBtn.addEventListener('click', () => {
   const s = getSettings();
   const bin = makeBin(wasm, s);
-  const filename = `gridfinity_${s.unitsX}x${s.unitsY}x${s.heightUnits}.stl`;
+  const filename = makeFilename(s);
   downloadFile(makeSTL(bin), filename);
   bin.delete();
 });
